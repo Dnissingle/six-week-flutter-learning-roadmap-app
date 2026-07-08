@@ -12,36 +12,47 @@ class Week {
       });
 
 }
+
+class Day {
+  String title;
+  String description;
+  String goal;
+
+  Day({
+    required this.title,
+    required this.description,
+    required this.goal,
+  });
+}
+
 List<Week> weeks = [Week(
-  title: 'Week 1',
+  title: 'First Week',
   description: 'Dart + Flutter Basics',
   goal: 'Understand syntax + UI structures + build simple screens',
 ),
   Week(
-    title: 'Week 2',
+    title: 'Second Week',
     description: 'Real UI + State + Navigation',
     goal: 'Build Interactive apps',
   ),
   Week(
-    title: 'Week 3',
+    title: 'Third Week',
     description: 'API + JSON + Async',
     goal: 'Work with real data',
   ),
   Week(
-    title: 'Week 4',
+    title: 'Fourth Week',
     description: 'State Management + Architecture',
     goal: 'Stop writing messy code',
   ),
   Week(
-    title: 'Week 5',
+    title: 'Fifth Week',
     description: 'Firebase + Auth',
     goal: 'Real app backend',
   ),
   Week(
-    title: 'Week 6',
+    title: 'Sixth Week',
     description: 'Portfolio Project + Polish',
     goal: 'Build something job-ready',
   ),
-
-
 ];

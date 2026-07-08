@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'weekdata.dart';
-
+import 'week-data.dart';
+import 'listview.dart';
+import 'add_task_screen.dart';
 
 class WeekPage extends StatefulWidget {
   const WeekPage({super.key});
@@ -10,10 +11,20 @@ class WeekPage extends StatefulWidget {
 }
 
 class _WeekPageState extends State<WeekPage> {
-  final _formKey = GlobalKey<FormState>();
-  String _title = '';
-  String _description = '';
-  String _goal = '';
+  // Move the async navigation function outside of the build method
+  Future<void> _goToAddTaskScreen() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AddTaskScreen()),
+    );
+
+    // If a valid Week object was returned, trigger a rebuild
+    if (result != null && mounted) {
+      setState(() {
+        // Triggers UI refresh for WeekPage and its children
+      });
+    }
+  }
 
   Future<void> showMyDialog(int position) async {
     return showDialog<void>(
@@ -41,10 +52,9 @@ class _WeekPageState extends State<WeekPage> {
               onPressed: () {
                 Navigator.of(context).pop();
                 setState(() {
-
                   weeks.removeAt(position);
                   ScaffoldMessenger.of(context).showSnackBar(
-                   const SnackBar(
+                    const SnackBar(
                       content: Text('Deleted'),
                     ),
                   );
@@ -61,116 +71,29 @@ class _WeekPageState extends State<WeekPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("ListView Builder Example"),
+        title: const Text("Six Week Flutter Roadmap"),
       ),
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              itemCount: weeks.length,
-              itemBuilder: (context, position) {
-                final week = weeks[position];
-                return Card(
-                  child: ListTile(
-                    title: Text(
-                      week.title,
-                      style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 4.0),
-                        Text('Goal: ${week.goal}', style: const TextStyle(fontSize: 14.0, fontStyle: FontStyle.italic)),
-                        Text('Description: ${week.description}', style: const TextStyle(fontSize: 14.0, fontStyle: FontStyle.italic)),
-                      ],
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.redAccent),
-                      onPressed:  (
-                          ) {
-                        showMyDialog(position);
-                      },
-                    ),
-                  ),
-                );
-              },
-            )
-
+            // Key addition: Passing weeks.length forces ViewWeek to reconstruct when count changes
+            child: ViewWeek(key: ValueKey(weeks.length)),
           ),
-          //const SizedBox(height: 10.0),
-          Form(
-              key: _formKey,
-              child: Column(
-            children: <Widget>[
-              TextFormField(
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Week',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a week number';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _title = value!;
-                },
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: IconButton(
+              onPressed: () {
+                // Correctly call the asynchronous method here
+                _goToAddTaskScreen();
+              },
+              icon: const Icon(
+                size: 40,
+                Icons.add_task,
               ),
-              TextFormField(
-                maxLength: 30,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Goal',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty || value.length < 4) {
-                    return 'Please enter a goal';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _goal = value!;
-                }
-              ),
-              TextFormField(
-                maxLength: 100,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Description',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a description';
-                  }
-                  return null;
-                }
-                ,
-                onSaved: (value) {
-                  _description = value!;
-                }
-              ),
-              FilledButton(onPressed: (){
-                if(_formKey.currentState!.validate()){
-                  _formKey.currentState!.save();
-                  setState(() {
-                    weeks.add(Week(
-                    title: _title,
-                    description: _description,
-                    goal: _goal));
-                  });
-                  _formKey.currentState!.reset();
-                  }
-                },
-    child: const Text("Add Week Task"))
-            ],
-          )
+            ),
           ),
         ],
-      )
-      ,
+      ),
     );
   }
 }
-

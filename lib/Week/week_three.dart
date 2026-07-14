@@ -21,7 +21,7 @@ List<Day> days = [
   Day(
       title: 'Day 15',
       description: 'Dart: async/await + Future',
-      isCompleted: false,
+      isCompleted: true,
       goal: 'Learn Dart',
       estimatedTime: 2
   ),
